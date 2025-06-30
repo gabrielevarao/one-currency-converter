@@ -3,40 +3,53 @@ package model;
 import java.util.Scanner;
 
 public class MenuScreen {
-    Scanner scanner = new Scanner (System.in);
+    static Scanner scanner = new Scanner (System.in);
 
-    public void init(){
+    public static void start(){
         System.out.println("""
                 
-                *****************************
-                $     CURRENCY CONVERTER    $
-                *****************************
-                """);
+                **********************************************************
+                $                   CURRENCY CONVERTER                   $
+                **********************************************************""");
     }
 
-    public String getBaseCurrency(){
+    public static String getBaseCurrency(){
         System.out.println("""
-                -----------------------------
-                       Nova consulta         
-                -----------------------------
-                O valor está em que moeda? Digite o código correspondente. 
-                Por ex.: USD (dólar americano); EUR (euro); BRL (real brasileiro).""");
+                ----------------------------------------------------------
+                                     Nova consulta
+                ----------------------------------------------------------
+                O valor está em que moeda? Digite o código correspondente. Por ex.: USD (dólar americano); BRL (real brasileiro).""");
         return scanner.nextLine();
     }
 
-    public String getTargetCurrency(){
+    public static String getTargetCurrency(){
         System.out.println("""
                 
-                O valor deve ser convertido para que moeda? Digite o código correspondente.
-                Por ex.: USD (dólar americano); EUR (euro); BRL (real brasileiro).""");
+                O valor deve ser convertido para que moeda? Digite o código correspondente. Por ex.: USD (dólar americano); EUR (euro); BRL (real brasileiro).""");
         return scanner.nextLine();
     }
 
-    public Double getAmount(){
+    public static double getAmount(){
         System.out.println("""
                 
-                Qual a quantia a ser convertida?""");
+                Qual a quantia a ser convertida? Escreva apenas os números.""");
         return scanner.nextDouble();
+    }
+
+    public static boolean endLoop (){
+
+        System.out.println("""
+                
+                Quer fazer outra consulta? Digite S para 'sim' ou N para 'não'.""");
+
+        scanner.nextLine();
+        String endLoop = scanner.nextLine();
+        if (endLoop.equalsIgnoreCase("S")){
+            return false;
+        } else {
+            System.out.println("Obrigada por utilizar o Currency Converter!");
+            return true;
+        }
     }
 
 }

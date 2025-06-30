@@ -1,79 +1,61 @@
 package connection;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import model.CurrenciesList;
+import model.MenuScreen;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
+
 
 
 public class CurrencyExchangeApiClient {
 
-    private String baseCurrency;
-    private String targetCurrency;
-
-    private String apiUrl = "https://api.vatcomply.com/";
-    private String urlRequest;
-    private HttpRequest request;
+    private String apiUrl = "https://hexarate.paikama.co/api/rates/latest/";
     private HttpClient client = HttpClient.newHttpClient();
-    private String apiResponse;
 
-    public CurrencyExchangeApiClient(String base, String target){
-        this.baseCurrency = base;
-        this.targetCurrency = target;
+    public String getApiResponse() throws IOException, InterruptedException{
 
-        this.urlRequest = this.apiUrl + "rates?base=" + baseCurrency + "&symbols=" + targetCurrency;
+        String urlRequest = this.apiUrl + MenuScreen.getBaseCurrency() + "?target=" + MenuScreen.getTargetCurrency();
 
-        this.request = HttpRequest.newBuilder()
-                .uri(URI.create(this.urlRequest))
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlRequest))
                 .build();
-    }
-
-    public void setApiResponse(String urlRequest) throws IOException, InterruptedException{
-
-        HttpResponse<String> response = this.client
-                .send(this.request, HttpResponse.BodyHandlers.ofString());
-
-        this.apiResponse = response.body();
-    }
-
-    public String getApiResponse(String urlRequest, HttpRequest request) throws IOException, InterruptedException{
-
         HttpResponse<String> response = this.client
                 .send(request, HttpResponse.BodyHandlers.ofString());
-
         return response.body();
     }
 
-//    public String getCurrencyList() throws IOException, InterruptedException {
-//        String urlCurrencyList = this.apiUrl + "currencies";
-//        getApiResponse(urlCurrencyList, this.request);
-//        return this.apiResponse;
-//    }
-
-    public double getExchangeRate (){
+    public double getExchangeRate() throws IOException, InterruptedException {
         Gson gson = new GsonBuilder().create();
-        ExchangeRate exchangeRateResponse = gson.fromJson(this.apiResponse, ExchangeRate.class);
+        ExchangeRate exchangeRateResponse = gson.fromJson(getApiResponse(), ExchangeRate.class);
 
-        return exchangeRateResponse.rates().get(this.targetCurrency);
+        return (double) exchangeRateResponse.data().get("mid");
     }
 
-    public String getBaseCurrency() {
-        return baseCurrency;
+    public void getCurrenciesList () throws IOException, InterruptedException {
+        Gson gson = new GsonBuilder().create();
+        String urlRequest = "https://gist.githubusercontent.com/gp187/4393cbc6dd761225071270c29b341b7b/raw/eb21c79192c4308152ba74924a4efc4bdfaa4377/currencies.json";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlRequest))
+                .build();
+        HttpResponse<String> response = this.client
+                .send(request, HttpResponse.BodyHandlers.ofString());
+
+        Type listType = new TypeToken<List<CurrenciesList>>() {}.getType();
+        List<CurrenciesList> currencies = gson.fromJson(response.body(), listType);
+
+        for (CurrenciesList m : currencies) {
+            System.out.println( "Nome: " + m.name() + ", Código: " + m.code());
+        }
+
     }
 
-    public String getTargetCurrency() {
-        return targetCurrency;
-    }
-
-    public String getUrlRequest() {
-        return urlRequest;
-    }
-
-    public HttpRequest getRequest() {
-        return request;
-    }
 }
