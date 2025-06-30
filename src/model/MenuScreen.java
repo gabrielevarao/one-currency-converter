@@ -2,7 +2,7 @@ package model;
 
 import java.util.Scanner;
 
-public class Menu {
+public class MenuScreen {
     Scanner scanner = new Scanner (System.in);
 
     public void init(){
