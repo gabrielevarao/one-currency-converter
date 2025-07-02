@@ -16,6 +16,5 @@ public class Main {
             currencyConverter.convertCurrency();
             endLoop = MenuScreen.endLoop();
         }
-
     }
 }
