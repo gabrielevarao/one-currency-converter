@@ -4,22 +4,23 @@ import connection.CurrencyExchangeApiClient;
 import connection.ListOfCurrenciesDto;
 import exception.CurrencyConversionException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class ConverterValidation {
 
-    public static boolean isValidCurrencyCode(String userCurrency) throws IOException, InterruptedException {
+    public static boolean isValidCurrencyCode(String userCurrency){
         Predicate<ListOfCurrenciesDto> currencyFilter = c -> c.code().equals(userCurrency);
-        CurrencyExchangeApiClient apiClient = new CurrencyExchangeApiClient();
-        List<ListOfCurrenciesDto> currencyList = apiClient.getCurrencyList();
+        List<ListOfCurrenciesDto> currencyList = CurrencyExchangeApiClient.getCurrencyList();
         boolean exists = currencyList.stream().anyMatch(currencyFilter);
 
         if (exists){
             return true;
         } else {
-            throw new CurrencyConversionException("Código de moeda inválido. Digite novamente.");
+            throw new CurrencyConversionException("""
+                      -----------------------
+                      !!! CÓDIGO INVÁLIDO !!!
+                      -----------------------""");
         }
     }
 
@@ -28,8 +29,18 @@ public class ConverterValidation {
             Double.parseDouble(amount);
             return true;
         } catch (NumberFormatException e){
-            return false;
+            throw new CurrencyConversionException("""
+                      ------------------------
+                      !!! FORMATO INVÁLIDO !!!
+                      ------------------------""");
         }
     }
 
+    public static boolean exit(String input) {
+        if (input == null) {
+            System.out.println(MenuScreen.endMessage);
+            return true;
+        }
+        return false;
+    }
 }

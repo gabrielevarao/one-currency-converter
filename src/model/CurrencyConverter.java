@@ -5,29 +5,27 @@ import com.google.gson.GsonBuilder;
 import connection.CurrencyExchangeApiClient;
 import connection.ExchangeRate;
 
-import java.io.IOException;
-
 public class CurrencyConverter {
     CurrencyExchangeApiClient apiClient = new CurrencyExchangeApiClient();
-    MenuScreen menu = new MenuScreen();
     double mid;
     String baseCurrency;
     String targetCurrency;
 
-    public void getExchangeRate() throws IOException, InterruptedException {
+    public void getExchangeRate(String baseCurrency, String targetCurrency) {
         Gson gson = new GsonBuilder().create();
-        ExchangeRate exchangeRateResponse = gson.fromJson(apiClient.getApiResponse(), ExchangeRate.class);
+        ExchangeRate exchangeRateResponse = gson.fromJson(apiClient
+                .getConversionResponse(baseCurrency, targetCurrency), ExchangeRate.class);
         this.mid = (double) exchangeRateResponse.data().get("mid");
         this.baseCurrency = (String) exchangeRateResponse.data().get("base");
         this.targetCurrency = (String) exchangeRateResponse.data().get("target");
     }
 
-    public void convertCurrency() {
-        double amount = Double.parseDouble(menu.getAmount());
+    public void convertCurrency(String amountString) {
+        double amount = Double.parseDouble(amountString);
         double result = amount * this.mid;
         System.out.printf("""
-                              
-                >> A quantia %.2f (%s) equivale a %.2f (%s).""", amount, baseCurrency, result, targetCurrency);
+                ----------------------------------------------------------
+                >> A quantia %.2f (%s) equivale a %.2f (%s).
+                ----------------------------------------------------------""", amount, baseCurrency, result, targetCurrency);
     }
-
 }

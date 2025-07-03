@@ -2,9 +2,7 @@ package connection;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import model.MenuScreen;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,30 +12,38 @@ import java.util.List;
 
 public class CurrencyExchangeApiClient {
 
-    private String exRateApiUrl = "https://hexarate.paikama.co/api/rates/latest/";
-    private String currencyListUrl = "https://gist.githubusercontent.com/gp187/4393cbc6dd761225071270c29b341b7b/raw/eb21c79192c4308152ba74924a4efc4bdfaa4377/currencies.json";
-    HttpClient client = HttpClient.newHttpClient();
-    HttpRequest listRequest = HttpRequest.newBuilder()
+    private final String exRateApiUrl = "https://hexarate.paikama.co/api/rates/latest/";
+    private static final String currencyListUrl = "https://gist.githubusercontent.com/gp187/4393cbc6dd761225071270c29b341b7b/raw/eb21c79192c4308152ba74924a4efc4bdfaa4377/currencies.json";
+    static final HttpClient client = HttpClient.newHttpClient();
+    static HttpRequest listRequest = HttpRequest.newBuilder()
             .uri(URI.create(currencyListUrl))
             .build();
 
-    public String getApiResponse() throws IOException, InterruptedException {
+    public String getConversionResponse(String baseCurrency, String targetCurrency){
 
-        String urlRequest = this.exRateApiUrl + MenuScreen.getBaseCurrency() + "?target=" + MenuScreen.getTargetCurrency();
+        String urlRequest = this.exRateApiUrl + baseCurrency + "?target=" + targetCurrency;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(urlRequest))
                 .build();
-        HttpResponse<String> response = client
-                .send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return response.body();
     }
 
-    public List<ListOfCurrenciesDto> getCurrencyList() throws IOException, InterruptedException {
+    public static List<ListOfCurrenciesDto> getCurrencyList() {
         Gson gson = new GsonBuilder().create();
 
-        HttpResponse<String> response = client
-                .send(listRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(listRequest, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
         Type listType = new TypeToken<List<ListOfCurrenciesDto>>() {}.getType();
 
