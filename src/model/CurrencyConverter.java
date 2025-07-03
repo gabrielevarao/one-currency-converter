@@ -9,11 +9,12 @@ import java.io.IOException;
 
 public class CurrencyConverter {
     CurrencyExchangeApiClient apiClient = new CurrencyExchangeApiClient();
+    MenuScreen menu = new MenuScreen();
     double mid;
     String baseCurrency;
     String targetCurrency;
 
-    public void setExchangeRate() throws IOException, InterruptedException {
+    public void getExchangeRate() throws IOException, InterruptedException {
         Gson gson = new GsonBuilder().create();
         ExchangeRate exchangeRateResponse = gson.fromJson(apiClient.getApiResponse(), ExchangeRate.class);
         this.mid = (double) exchangeRateResponse.data().get("mid");
@@ -21,8 +22,8 @@ public class CurrencyConverter {
         this.targetCurrency = (String) exchangeRateResponse.data().get("target");
     }
 
-    public void convertCurrency () {
-        double amount = MenuScreen.getAmount();
+    public void convertCurrency() {
+        double amount = Double.parseDouble(menu.getAmount());
         double result = amount * this.mid;
         System.out.printf("""
                               

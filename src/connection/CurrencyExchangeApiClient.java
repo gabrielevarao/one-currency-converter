@@ -21,7 +21,7 @@ public class CurrencyExchangeApiClient {
             .uri(URI.create(currencyListUrl))
             .build();
 
-    public String getApiResponse() throws IOException, InterruptedException{
+    public String getApiResponse() throws IOException, InterruptedException {
 
         String urlRequest = this.exRateApiUrl + MenuScreen.getBaseCurrency() + "?target=" + MenuScreen.getTargetCurrency();
 
@@ -33,28 +33,30 @@ public class CurrencyExchangeApiClient {
         return response.body();
     }
 
-    public List<ListOfCurrenciesDto> getCurrenciesList () throws IOException, InterruptedException {
+    public List<ListOfCurrenciesDto> getCurrencyList() throws IOException, InterruptedException {
         Gson gson = new GsonBuilder().create();
 
-            HttpResponse<String> response = client
-                    .send(listRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client
+                .send(listRequest, HttpResponse.BodyHandlers.ofString());
 
-            Type listType = new TypeToken<List<ListOfCurrenciesDto>>() {}.getType();
-            List<ListOfCurrenciesDto> currencies = gson.fromJson(response.body(), listType);
+        Type listType = new TypeToken<List<ListOfCurrenciesDto>>() {}.getType();
 
-//            int currencyNameSize = 36;
-//            int codeSize = 4;
-//
-//            String border = "+" + "-".repeat(currencyNameSize) + "+" + "-".repeat(codeSize) + "+";
-//            System.out.println(border);
-//            System.out.printf("|%-" + currencyNameSize + "s|%-" + codeSize + "s|%n",
-//                    "               MOEDA               ", "COD");
-//            System.out.println(border);
-//
-//            for (ListOfCurrenciesDto m : currencies) {
-//                System.out.printf("|%-" + currencyNameSize + "s|%-" + codeSize + "s|%n", m.name(), m.code());
-//                System.out.println(border);
-//            }
-            return currencies;
+        return gson.fromJson(response.body(), listType);
+    }
+
+    public static void currencyListToString(List<ListOfCurrenciesDto> currencies) {
+        int currencyNameSize = 36;
+        int codeSize = 4;
+
+        String border = "+" + "-".repeat(currencyNameSize) + "+" + "-".repeat(codeSize) + "+";
+        System.out.println(border);
+        System.out.printf("|%-" + currencyNameSize + "s|%-" + codeSize + "s|%n",
+                "               MOEDA               ", "COD");
+        System.out.println(border);
+
+        for (ListOfCurrenciesDto m : currencies) {
+            System.out.printf("|%-" + currencyNameSize + "s|%-" + codeSize + "s|%n", m.name(), m.code());
+            System.out.println(border);
+        }
     }
 }

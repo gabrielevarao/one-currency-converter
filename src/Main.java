@@ -9,12 +9,13 @@ public class Main {
         CurrencyConverter currencyConverter = new CurrencyConverter();
         boolean endLoop = false;
 
-        MenuScreen.start();
+        System.out.println(MenuScreen.banner);
 
         while (!endLoop) {
-            currencyConverter.setExchangeRate();
-            currencyConverter.convertCurrency();
-            endLoop = MenuScreen.endLoop();
+            System.out.println(MenuScreen.newConsultMessage);
+                currencyConverter.getExchangeRate();
+                currencyConverter.convertCurrency();
+                endLoop = MenuScreen.anotherConversion();
         }
     }
 }
